@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+    <!--引入外部db.properties文件-->
+    <properties resource="db.properties"/>
+    <!--开启二级缓存-->
+    <settings>
+        <setting name="cacheEnabled" value="true"/>
+    </settings>
+    <!--设置别名-->
+    <typeAliases>
+        <!--实体类命设置别名成customer-->
+        <!--<typeAlias type="com.chen.po.Student" alias="student"/>-->
+        <!--直接扫描实体包-->
+        <package name="com.chen.po"/>
+    </typeAliases>
+    <!--1.配置环境，默认的环境 id 为development-->
+    <environments default="development">
+        <!--2.配置id为development的数据库环境-->
+        <environment id="development">
+            <!--使用JDBC的事务管理-->
+            <transactionManager type="JDBC"/>
+            <!--连接数据池-->
+            <dataSource type="POOLED">
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <!--配置Mapper的位置-->
+    <mappers>
+        <mapper resource="com/chen/mapper/SpecilMapper.xml"/>
+    </mappers>
+</configuration>

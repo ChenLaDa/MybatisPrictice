@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chen.mapper.SpecilMapper">
+    <!--全局开启二级缓存-->
+    <cache/>
+    <!--useCache="false"关闭单个方法缓存-->
+    <resultMap id="myResulMap" type="specil">
+
+        <id property="sid" column="spilinfoid"/>
+        <result property="did" column="depinfoid"/>
+        <result property="scode" column="spilinfocode"/>
+        <result property="sname" column="spilinfoname"/>
+        <result property="saim" column="spilinfoaim"/>
+        <result property="sprodire" column="spilinfoprodire"/>
+    </resultMap>
+    <select id="findSpecilById" parameterType="int" resultMap="myResulMap" >
+          select * from specilinfo where spilinfoid=#{id}
+    </select>
+
+    <select id="findAll" resultType="specil" useCache="false">
+          SELECT * FROM  specilinfo
+    </select>
+
+    <select id="findAllSplit" parameterType="java.util.Map" resultMap="myResulMap">
+          SELECT * FROM  specilinfo
+          limit #{start},#{pageSize}
+    </select>
+
+    <select id="findAllSplit2" resultMap="myResulMap">
+          SELECT * FROM  specilinfo
+          limit #{start},#{pageSize}
+    </select>
+
+    <select id="findAllSplit3" parameterType="java.util.Map" resultMap="myResulMap">
+          SELECT * FROM   specilinfo WHERE ${colName} LIKE concat('%',#{keyword},'%')
+          limit #{start},#{pageSize}
+    </select>
+<!--if元素-->
+    <select id="findAllSplit4" parameterType="java.util.Map" resultMap="myResulMap">
+          SELECT * FROM   specilinfo WHERE 1=1
+              <if test="#{colName}!=null and #{keyword}!=null">
+                AND  ${colName} LIKE concat('%',#{keyword},'%')
+              </if>
+              <if test="#{coloder}!=null">
+                ORDER BY ${coloder} DESC
+              </if>
+              <if test="#{start}!=null and #{pageSize}!=null">
+                  limit #{start},#{pageSize}
+              </if>
+    </select>
+<!--choose元素-->
+    <select id="findSpecilByNameTestchoose" parameterType="java.util.Map" resultMap="myResulMap">
+        SELECT  * FROM specilinfo WHERE 1=1
+            <choose>
+                <when test="#{colName}!=null and #{keyword}!=null">
+                    AND  ${colName} LIKE concat('%',#{keyword},'%')
+                </when>
+                <when test="#{start}!=null and #{pageSize}!=null">
+                    limit #{start},#{pageSize}
+                </when>
+                <otherwise>
+                    AND specilinfo IS NOT NULL
+                </otherwise>
+            </choose>
+    </select>
+
+<!--where元素-->
+    <select id="findSpecilByNameAndTestWhere" parameterType="java.util.Map" resultMap="myResulMap">
+        SELECT  * FROM specilinfo
+          <where>
+              <if test="#{colName}!=null and #{keyword}!=null">
+                  AND  ${colName} LIKE concat('%',#{keyword},'%')
+              </if>
+
+              <if test="#{start}!=null and #{pageSize}!=null">
+                  limit #{start},#{pageSize}
+              </if>
+          </where>
+    </select>
+
+<!--foreach元素-->
+    <select id="findSpecilByNameAndTestforeach" parameterType="List" resultMap="myResulMap">
+        SELECT * FROM specilinfo WHERE  spilinfoid IN
+          <foreach item="id" index="index" collection="list" open="(" separator="," close=")">
+              #{id}
+          </foreach>
+    </select>
+
+<!--set元素-->
+    <update id="findSpecilByNameAndTestSet" parameterType="java.util.Map">
+        UPDATE specilinfo
+        <set>
+            <if test="#{colName}!=null">
+                ${colName}=#{colNameH}
+            </if>
+        </set>
+        where spilinfoid=#{id}
+    </update>
+
+</mapper>
